@@ -1,0 +1,20 @@
+# Compiled output
+bin/
+*.class
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# VS Code
+.vscode/
+
+# IDE project files
+*.iml
+.idea/
+
+# JAR files (listed separately in README — download instructions provided)
+# lib/*.jar  <-- keep lib JARs in the repo so it compiles out of the box
+
+# OS
+Thumbs.db
