@@ -55,14 +55,13 @@ public class DashboardFrame extends JFrame {
         // Employees → real frame (THIS is the correct one)
         btnEmployees.addActionListener(e -> new EmployeesFrame().setVisible(true));
 
-        // Others → placeholder windows
-        btnPayStruct.addActionListener(e -> openPlaceholder("Pay Structure"));
-        btnPayrollRun.addActionListener(e -> openPlaceholder("Payroll Run"));
+        btnPayStruct.addActionListener(e -> new PayStructureFrame().setVisible(true));
+        btnPayrollRun.addActionListener(e -> new PayrollRunFrame().setVisible(true));
 
         // ✅ Allowances → real menu frame
         btnAllowances.addActionListener(e -> new AllowancesMenuFrame().setVisible(true));
 
-        btnDeductions.addActionListener(e -> openPlaceholder("Deductions"));
+        btnDeductions.addActionListener(e -> new DeductionsFrame().setVisible(true));
 
         // Logout
         btnLogout.addActionListener(e -> {

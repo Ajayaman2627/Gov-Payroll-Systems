@@ -229,7 +229,46 @@ CREATE TABLE employee_deduction (
 );
 ```
 
-### 3. Insert seed data
+### 3. Create additional tables (Pay Structure & Payroll)
+
+```sql
+-- Pay Structure: grade + step → salary amount
+CREATE TABLE pay_structure (
+    pay_structure_id INT PRIMARY KEY AUTO_INCREMENT,
+    grade_id         INT NOT NULL,
+    step_no          INT NOT NULL,
+    salary_amount    DECIMAL(12,2) NOT NULL,
+    UNIQUE KEY uq_grade_step (grade_id, step_no),
+    FOREIGN KEY (grade_id) REFERENCES grade(grade_id)
+);
+
+-- Payroll run header (one row per payroll run)
+CREATE TABLE payroll_run (
+    run_id             INT PRIMARY KEY AUTO_INCREMENT,
+    run_date           DATE        NOT NULL,
+    pay_period_month   INT         NOT NULL,
+    pay_period_year    INT         NOT NULL,
+    run_by_user_id     INT,
+    status             VARCHAR(20) DEFAULT 'COMPLETED',
+    FOREIGN KEY (run_by_user_id) REFERENCES user_account(user_id)
+);
+
+-- Payroll record: one row per employee per run
+CREATE TABLE payroll_record (
+    record_id         INT PRIMARY KEY AUTO_INCREMENT,
+    run_id            INT           NOT NULL,
+    emp_id            INT           NOT NULL,
+    basic_salary      DECIMAL(12,2),
+    total_allowances  DECIMAL(12,2),
+    gross_pay         DECIMAL(12,2),
+    total_deductions  DECIMAL(12,2),
+    net_pay           DECIMAL(12,2),
+    FOREIGN KEY (run_id) REFERENCES payroll_run(run_id),
+    FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
+);
+```
+
+### 4. Insert seed data
 
 ```sql
 -- Roles
@@ -327,15 +366,13 @@ INSERT INTO grade (grade_name) VALUES ('Grade 1'), ('Grade 2'), ('Grade 3');
 | Employee Allowances | `EmployeeAllowancesFrame` | `EmployeeAllowanceDAO` | Complete |
 | Deduction Types | `ManageDeductionTypePanel` | `DeductionTypeDAO` | Complete |
 | Employee Deductions | `ManageEmployeeDeductionPanel` | `EmployeeDeductionDAO` | Complete |
-| Pay Structure | `PayStructureFrame` | — | In Progress |
-| Payroll Run | `PayrollRunFrame` | — | In Progress |
+| Pay Structure | `PayStructureFrame` | `PayStructureDAO` | Complete |
+| Payroll Run + Payslips | `PayrollRunFrame`, `PayslipDialog` | `PayrollDAO` | Complete |
 
 ---
 
-## Known Limitations / In Progress
+## Known Limitations
 
-- **Pay Structure screen** — Grade/step salary matrix UI is not yet implemented (placeholder frame)
-- **Payroll Run screen** — Automated payslip calculation is not yet implemented (placeholder frame)
 - **Password hashing** — Passwords are currently stored and compared as plain text in the dev build; production should use bcrypt or SHA-256
 - **No input validation layer** — Basic null/empty checks exist in the UI but no centralised validator
 - **Single-user sessions** — No concurrent user support; the `Session` class is a static singleton
